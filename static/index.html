@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M&S Plant Spares Portal</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="static/logo.png" alt="M&S Plant Spares Logo" class="logo">
+            <h1>M&S Plant Spares Portal</h1>
+        </header>
+        <div class="dropdown-group">
+            <label for="makeDropdown">Make</label>
+            <select id="makeDropdown">
+                <option value="">Select Make</option>
+            </select>
+        </div>
+        <div class="dropdown-group">
+            <label for="modelDropdown">Model</label>
+            <select id="modelDropdown">
+                <option value="">Select Model</option>
+            </select>
+        </div>
+        <div class="dropdown-group">
+            <label for="versionDropdown">Version</label>
+            <select id="versionDropdown">
+                <option value="">Select Version</option>
+            </select>
+        </div>
+        <div class="dropdown-group">
+            <label for="categoryDropdown">Category</label>
+            <select id="categoryDropdown">
+                <option value="">Select Category</option>
+            </select>
+        </div>
+        <button id="searchButton">Search Parts</button>
+        <ul id="partsList"></ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const makeDropdown = document.getElementById('makeDropdown');
+            const modelDropdown = document.getElementById('modelDropdown');
+            const versionDropdown = document.getElementById('versionDropdown');
+            const categoryDropdown = document.getElementById('categoryDropdown');
+            const partsList = document.getElementById('partsList');
+            const searchButton = document.getElementById('searchButton');
+
+            // Function to fetch data from the server
+            async function fetchData(url, params) {
+                const response = await fetch(`${url}?${new URLSearchParams(params)}`);
+                return await response.json();
+            }
+
+            // Function to populate dropdowns
+            function populateDropdown(dropdown, options) {
+                dropdown.innerHTML = '<option value="">Select</option>'; // Clear existing options and add default option
+                options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.name;
+                    opt.textContent = option.name;
+                    dropdown.appendChild(opt);
+                });
+            }
+
+            // Function to clear dropdowns
+            function clearDropdowns(...ids) {
+                ids.forEach(id => {
+                    const dropdown = document.getElementById(id);
+                    dropdown.innerHTML = '<option value="">Select</option>';
+                });
+            }
+
+            // Populate the initial dropdowns
+            async function populateDropdowns() {
+                try {
+                    const data = await fetchData('/api/dropdowns', {});
+                    populateDropdown(makeDropdown, data.makes);
+
+                    makeDropdown.addEventListener('change', async function() {
+                        const make = this.value;
+                        if (make) {
+                            const models = await fetchData('/api/models', { make });
+                            populateDropdown(modelDropdown, models.models);
+                            clearDropdowns('versionDropdown', 'categoryDropdown');
+                        } else {
+                            clearDropdowns('modelDropdown', 'versionDropdown', 'categoryDropdown');
+                        }
+                    });
+
+                    modelDropdown.addEventListener('change', async function() {
+                        const model = this.value;
+                        if (model) {
+                            const versions = await fetchData('/api/versions', { model });
+                            populateDropdown(versionDropdown, versions.versions);
+                            clearDropdowns('categoryDropdown');
+                        } else {
+                            clearDropdowns('versionDropdown', 'categoryDropdown');
+                        }
+                    });
+
+                    versionDropdown.addEventListener('change', async function() {
+                        const version = this.value;
+                        if (version) {
+                            const categories = await fetchData('/api/categories', { version });
+                            populateDropdown(categoryDropdown, categories.categories);
+                        } else {
+                            clearDropdowns('categoryDropdown');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error populating dropdowns:', error);
+                }
+            }
+
+            // Function to search parts
+            async function searchParts() {
+                const make = makeDropdown.value;
+                const model = modelDropdown.value;
+                const version = versionDropdown.value;
+                const category = categoryDropdown.value;
+
+                const queryParams = {
+                    make: make || '',
+                    model: model || '',
+                    version: version || '',
+                    category: category || ''
+                };
+
+                try {
+                    const response = await fetch(`/api/parts?${new URLSearchParams(queryParams)}`);
+                    const parts = await response.json();
+                    displayParts(parts);
+                } catch (error) {
+                    console.error('Error fetching parts:', error);
+                }
+            }
+
+            // Function to display parts
+            function displayParts(parts) {
+                partsList.innerHTML = ''; // Clear existing parts
+                if (parts.length > 0) {
+                    parts.forEach(part => {
+                        const li = document.createElement('li');
+                        li.textContent = `${part.Part}, ${part['Part Number']}`;
+                        partsList.appendChild(li);
+                    });
+                } else {
+                    partsList.innerHTML = '<li>No parts found</li>';
+                }
+            }
+
+            // Initialize the app
+            populateDropdowns();
+            searchButton.addEventListener('click', searchParts);
+        });
+    </script>
+</body>
+</html>
