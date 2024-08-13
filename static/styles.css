@@ -1,17 +1,24 @@
 /* static/styles.css */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-image: url('static/images/background.jpg'); /* Path to your background image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #333; /* Default text color */
 }
 
 .container {
     width: 80%;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
 header {
@@ -43,8 +50,9 @@ h1 {
 }
 
 select, button {
+    width: calc(100% - 22px); /* Width adjustment for consistent styling */
     padding: 10px;
-    margin: 5px;
+    margin: 5px 0;
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 16px;
@@ -55,6 +63,7 @@ button {
     color: #fff;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
@@ -72,4 +81,80 @@ li {
     margin-bottom: 5px;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+/* Styles for Login Form */
+form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.alert {
+    margin-top: 15px;
+    padding: 10px;
+    color: #fff;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: #28a745;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    select, button {
+        font-size: 14px;
+    }
 }

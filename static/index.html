@@ -51,7 +51,7 @@
 
             // Function to fetch data from the server
             async function fetchData(url, params) {
-                const response = await fetch(`${url}?${new URLSearchParams(params)}`);
+                const response = await fetch(${url}?${new URLSearchParams(params)});
                 return await response.json();
             }
 
@@ -131,7 +131,7 @@
                 };
 
                 try {
-                    const response = await fetch(`/api/parts?${new URLSearchParams(queryParams)}`);
+                    const response = await fetch(/api/parts?${new URLSearchParams(queryParams)});
                     const parts = await response.json();
                     displayParts(parts);
                 } catch (error) {
@@ -145,7 +145,7 @@
                 if (parts.length > 0) {
                     parts.forEach(part => {
                         const li = document.createElement('li');
-                        li.textContent = `${part.Part}, ${part['Part Number']}`;
+                        li.textContent = ${part.Part}, ${part['Part Number']};
                         partsList.appendChild(li);
                     });
                 } else {
